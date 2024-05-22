@@ -1,23 +1,79 @@
 #include <iostream>
 
+#define INITSIZE 100
+
 // memory_allocate(){}
 
 // memory_deallocate(){}
 
-// get_input(){}
+int get_command() {
+    return 1;
+}
+
+char get_text() {
+    return 'a';
+}
+void append_text() {
+    //
+}
+
+void start_new_line() {
+    //
+}
+
+void save_to_file() {
+    //
+}
+
+void load_from_file() {
+    //
+}
+
+void print_text() {
+    //
+}
+
+void insert_at_index() {
+    //
+}
+
+void search() {
+    //
+}
+
+void clear_console() {
+    //
+}
 
 int main() {
-    // get user input
-
-    // do this:
-                // if command == 1 -> append_text(get user input)
-                // elif command == 2 -> start_new_line()
-                // elif command == 3 -> saving(get user input, file for saving)
-                // elif command == 4 -> loading(get user input, file for loading)
-                // elif command == 5 -> print_text()
-                // elif command == 6 -> insert_at_index(get user input, 2 integers for line and index; get user input, text to be inserted)
-                // elif command == 7 -> search(egt user input, text to be searched)
-                // elif command == 8 -> clear
-    // while command != quit
+    int command = get_command();
+    do {
+        switch (command) {
+            case 1: {
+                append_text();
+            }
+            case 2: {
+                start_new_line();
+            }
+            case 3: {
+                save_to_file();
+            }
+            case 4: {
+                load_from_file();
+            }
+            case 5: {
+                print_text();
+            }
+            case 6: {
+                insert_at_index();
+            }
+            case 7: {
+                search();
+            }
+            case 8: {
+                clear_console();
+            }
+        }
+    } while (1);
     return 0;
 }
