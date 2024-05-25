@@ -4,33 +4,37 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-#define CAPASITY 100
-
 
 struct TextContainer {
     char* buffer;
     int current_size;
     int capasity;
 };
-char* memory_allocate(TextContainer* text_to_allocte) {
-    size_t length = strlen(text_to_allocte->buffer);
-    char* pointer = (char*)malloc(length*sizeof(char));
-    return pointer;
-}
+
 void textContainer_initialize(TextContainer* text) {
-    text->buffer = NULL;
     text->current_size = 0;
     text->capasity = 100;
-}
-void memory_reallocate() {
+    text->buffer = (char*)malloc(text->capasity * sizeof(char));
+    if(text->buffer == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(1);
+    }
 
 }
+void memory_reallocate(TextContainer* text) {
+    text->capasity += 100;
+    text->buffer = (char*)realloc(text->buffer, text->capasity*sizeof(char));
+    if(text->buffer == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(1);
+    }
+}
 
-void memory_deallocate(char* text) {
+/*void memory_deallocate(char* text) {
     free(text);
-}
+}*/
 
-int get_command() {
+int get_command(){
     int command;
     printf("Enter 1 to append text to the end\n");
     printf("Enter 2 to start a new line\n");
@@ -45,31 +49,26 @@ int get_command() {
     return command;
 }
 
-/*char* get_text(TextContainer* text) {
+char* get_text() {
     char c;
-    char* entered_text = NULL;
-    textContainer_initialize(text);
-    printf("Enter text you want to append. When done, press 'enter'");
-    c = getchar();
-    while (c != '\n') {
-        if ()
+    TextContainer* input = (TextContainer*)malloc(sizeof(TextContainer));
+    textContainer_initialize(input);
+    printf("Enter text you want to append. When done, press '@'");
+    while ((c = (char)getchar()) != '@') {
+        while (input->current_size + 1 >= input->capasity){
+            memory_reallocate(input);
         }
-         entered_text[text->current_size] = c;
+        input->buffer[input->current_size] = (char)c;
+        input->current_size++;
     }
+    input->buffer[input->current_size] = '\0';
+    return input->buffer;
+}
 
-    /*char* input[];#3#
-    int length;
-    char* input = (char*)malloc(length*sizeof(char));
-    scanf("%s", input);
-    length = strlen(input);
-    return input;#1#
-    return entered_text;
-}*/
 void append_text(TextContainer* text) {
-    /*char* text_to_append = get_text(text);
+    char* text_to_append = get_text();
     printf("Enter text you want to append:\n");
-    // smth else
-    printf("Text appended\n");*/
+    printf("Text appended\n");
 }
 
 void start_new_line() {
@@ -100,16 +99,19 @@ void clear_console() {
     //
 }
 
-int main() {/*
-    TextContainer* text;
-    textContainer_initialize(text);
-    memory_allocate(text);*/
+int main() {
+    TextContainer text;
+    textContainer_initialize(&text);
     int command;
     do {
         command = get_command();
         switch (command) {
             case 1: {
-                /*append_text(text);*/
+                /*append_text(&text);*/
+                char* input;
+                input = get_text();
+                printf(input);
+                printf("IT WOOOOOOOOORKS");
                 break;
             }
             case 2: {
