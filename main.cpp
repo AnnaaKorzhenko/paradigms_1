@@ -73,8 +73,9 @@ void append_text(TextContainer* existing_text, TextContainer* text_to_append) {
     free(text_to_append);
 }
 
-void start_new_line() {
-    //
+void start_new_line(TextContainer* existing_text) {
+    strcpy(existing_text->buffer+existing_text->current_size, "\n");
+    printf("New line started\n");
 }
 
 void save_to_file() {
@@ -113,7 +114,7 @@ int main() {
                 break;
             }
             case 2: {
-                start_new_line();
+                start_new_line(text_storage);
                 break;
             }
             case 3: {
