@@ -15,10 +15,6 @@ TextContainer* textContainer_initialize() {
     TextContainer* text = (TextContainer*)malloc(sizeof(TextContainer));
     text->current_size = 0;
     text->capasity = 100;
-    if(text == NULL) {
-        fprintf(stderr, "Memory allocation failed\n");
-        exit(1);
-    }
     text->buffer = (char*)malloc(text->capasity * sizeof(char));
     if(text->buffer == NULL) {
         fprintf(stderr, "Memory allocation failed\n");
@@ -26,7 +22,6 @@ TextContainer* textContainer_initialize() {
         exit(1);
     }
     return text;
-
 }
 void memory_reallocate(TextContainer* text) {
     text->capasity += 100;
@@ -56,27 +51,26 @@ int get_command(){
 TextContainer* get_text() {
     char c;
     TextContainer* input = textContainer_initialize();
-    /*TextContainer* input = (TextContainer*)malloc(sizeof(TextContainer));*//*
-    textContainer_initialize(input);*/
     printf("Enter text you want to append. When done, press '@'");
     while ((c = (char)getchar()) != '@') {
-        while (input->current_size + 1 >= input->capasity){
+        while (input->current_size + 1 > input->capasity){
             memory_reallocate(input);
         }
-        input->buffer[input->current_size] = (char)c;
-        input->current_size++;
+        if (c != '\n') {
+            input->buffer[input->current_size] = (char)c;
+            input->current_size++;
+        }
     }
     input->buffer[input->current_size] = '\0';
     return input;
 }
 
-void append_text(TextContainer* existing_text) {
-    TextContainer* text_to_append = get_text();
-    printf("Enter text you want to append:\n");
+void append_text(TextContainer* existing_text, TextContainer* text_to_append) {
     strcpy(existing_text->buffer+existing_text->current_size, text_to_append->buffer);
     existing_text->current_size += text_to_append->current_size;
     printf("Text appended\n");
     free(text_to_append->buffer);
+    free(text_to_append);
 }
 
 void start_new_line() {
@@ -108,18 +102,14 @@ void clear_console() {
 }
 
 int main() {
-    TextContainer* text;
-    text = textContainer_initialize();
     int command;
+    TextContainer* text_storage = textContainer_initialize();
     do {
         command = get_command();
         switch (command) {
             case 1: {
-                /*append_text(&text);*/
-                TextContainer* parser;
-                parser = textContainer_initialize();
-                append_text(parser);
-                printf("IT WOOOOOOOOORKS");
+                TextContainer* text_to_append = get_text();
+                append_text(text_storage, text_to_append);
                 break;
             }
             case 2: {
