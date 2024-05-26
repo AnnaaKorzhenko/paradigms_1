@@ -51,15 +51,14 @@ int get_command(){
 TextContainer* get_text() {
     char c;
     TextContainer* input = textContainer_initialize();
-    printf("Enter text you want to append. When done, press '@'");
-    while ((c = (char)getchar()) != '@') {
+    printf("Enter text you want to append. When done, press '/'");
+    c = char(getchar()); //calling this function before the loop to ignore the first char, that is going to be "\n"
+    while ((c = (char)getchar()) != '/') {
         while (input->current_size + 1 > input->capasity){
             memory_reallocate(input);
         }
-        if (c != '\n') {
-            input->buffer[input->current_size] = (char)c;
-            input->current_size++;
-        }
+        input->buffer[input->current_size] = (char)c;
+        input->current_size++;
     }
     input->buffer[input->current_size] = '\0';
     return input;
@@ -74,20 +73,57 @@ void append_text(TextContainer* existing_text, TextContainer* text_to_append) {
 }
 
 void start_new_line(TextContainer* existing_text) {
+    while (existing_text->current_size + 1 > existing_text->capasity) {
+        memory_reallocate(existing_text);
+    }
     strcpy(existing_text->buffer+existing_text->current_size, "\n");
+    existing_text->current_size++;
     printf("New line started\n");
 }
 
-void save_to_file() {
-    //
+char* get_file_name() {
+    char file_name[30];
+    printf("Enter the name of the file you want to save to. Notice taht if there is something in this file, your text would be appended to the end\n");
+    scanf("%s", file_name);
+    return file_name;
 }
 
-void load_from_file() {
-    //
+void save_to_file(TextContainer* text) {
+    char file_name[30];
+    printf("Enter the name of the file you want to save to. Notice taht if there is something in this file, your text would be appended to the end\n");
+    scanf("%s", file_name);
+    FILE* file = fopen(file_name, "a");
+    if (file == NULL) {
+        fprintf(stderr, "Failed to open file\n");
+    }
+    fwrite(text->buffer, sizeof(char), text->current_size, file);
+    fwrite("\n", sizeof(char), 1, file);
+    fclose(file);
+    printf("Text saved to file\n");
 }
 
-void print_text() {
-    //
+TextContainer* load_from_file(TextContainer* text) {
+    char file_name[30];
+    printf("Enter the name of the file you want to save to. Notice taht if there is something in this file, your text would be appended to the end\n");
+    scanf("%s", file_name);
+    FILE* file = fopen(file_name, "r");
+    if (file == NULL) {
+        fprintf(stderr, "Failed to open file\n");
+    }
+    char c;
+    while ((c = getc(file)) != EOF) {
+        while (text->current_size + 1 > text->capasity){
+            memory_reallocate(text);
+        }
+        text->buffer[text->current_size] = (char)c;
+        text->current_size++;
+    }
+    text->buffer[text->current_size] = '\0';
+    return text;
+}
+
+void print_text(TextContainer* text) {
+    printf("%s\n", text->buffer);
 }
 
 void insert_at_index() {
@@ -118,15 +154,18 @@ int main() {
                 break;
             }
             case 3: {
-                save_to_file();
+                save_to_file(text_storage);
                 break;
             }
             case 4: {
-                load_from_file();
+                char file_to_load_from[30];
+                printf("Enter the name of the file you want to save to. Notice taht if there is something in this file, your text would be appended to the end\n");
+                scanf("%s", file_to_load_from);
+                load_from_file(text_storage);
                 break;
             }
             case 5: {
-                print_text();
+                print_text(text_storage);
                 break;
             }
             case 6: {
@@ -142,7 +181,7 @@ int main() {
                 break;
             }
             case 0: {
-                printf("Exit! Have a good day1");
+                printf("Exit! Have a good day!");
                 break;
             }
             default: {
