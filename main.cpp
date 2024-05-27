@@ -114,6 +114,7 @@ TextContainer* load_from_file(TextContainer* text) {
         text->current_size++;
     }
     text->buffer[text->current_size] = '\0';
+    printf("Text has been loaded from file\n");
     return text;
 }
 
@@ -184,16 +185,10 @@ int main() {
                 break;
             }
             case 3: {
-                char file_to_save_to[30];
-                printf("Enter the name of the file you want to save to. Notice taht if there is something in this file, your text would be appended to the end\n");
-                scanf("%s", file_to_save_to);
                 save_to_file(text_storage);
                 break;
             }
             case 4: {
-                char file_to_load_from[30];
-                printf("Enter the name of the file you want to load from\n");
-                scanf("%s", file_to_load_from);
                 load_from_file(text_storage);
                 break;
             }
