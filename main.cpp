@@ -3,6 +3,7 @@
 #include <strings.h>
 #include <stdint.h>
 #include <stdlib.h>
+#include <conio.h>
 
 
 struct TextContainer {
@@ -23,6 +24,7 @@ TextContainer* textContainer_initialize() {
     }
     return text;
 }
+
 void memory_reallocate(TextContainer* text) {
     text->capasity += 100;
     free(text->buffer);
@@ -81,13 +83,6 @@ void start_new_line(TextContainer* existing_text) {
     printf("New line started\n");
 }
 
-char* get_file_name() {
-    char file_name[30];
-    printf("Enter the name of the file you want to save to. Notice taht if there is something in this file, your text would be appended to the end\n");
-    scanf("%s", file_name);
-    return file_name;
-}
-
 void save_to_file(TextContainer* text) {
     char file_name[30];
     printf("Enter the name of the file you want to save to. Notice taht if there is something in this file, your text would be appended to the end\n");
@@ -126,16 +121,51 @@ void print_text(TextContainer* text) {
     printf("%s\n", text->buffer);
 }
 
-void insert_at_index() {
-    //
+void insert_at_index(TextContainer* text) {
+    TextContainer* substring = get_text();
+    int line;
+    int index;
+    int line_count = 0;
+    printf("Enter number of line you want to insert at (starting with 0):\n");
+    scanf("%d", &line);
+    printf("Enter index you want to insert at (starting with 0):\n");
+    scanf("%d", &index);
+
+    int i = 0;
+    for (i; i < text->current_size; i++) {
+        if (text->buffer[i] == '\n') {
+            line_count++;
+        }
+        if (line_count == line) {
+            break;
+        }
+    }
+    if (line_count != line) {
+        fprintf(stderr, "This line does not exist");
+    }
+    // now we've proccessed searching for the needed line
+    int point_to_insert_at = i + index;
+    if (point_to_insert_at > text->current_size) {
+        fprintf(stderr, "This index does not exist\n");
+    }
+
+    int new_size = text->current_size + substring->current_size;
+    while (new_size > text->capasity) {
+        memory_reallocate(text);
+    }
+    memmove(text->buffer + point_to_insert_at + substring->current_size, text->buffer + point_to_insert_at, text->current_size - point_to_insert_at);
+    memcpy(text->buffer + point_to_insert_at, substring->buffer, substring->current_size);
+    text->current_size = new_size;
+    text->buffer[text->current_size] = '\0';
+    free(substring->buffer);
+    free(substring);
+    printf("Text insrted!\n");
 }
 
 void search() {
-    //
-}
+    TextContainer* substring = get_text();
 
-void clear_console() {
-    //
+
 }
 
 int main() {
@@ -154,12 +184,15 @@ int main() {
                 break;
             }
             case 3: {
+                char file_to_save_to[30];
+                printf("Enter the name of the file you want to save to. Notice taht if there is something in this file, your text would be appended to the end\n");
+                scanf("%s", file_to_save_to);
                 save_to_file(text_storage);
                 break;
             }
             case 4: {
                 char file_to_load_from[30];
-                printf("Enter the name of the file you want to save to. Notice taht if there is something in this file, your text would be appended to the end\n");
+                printf("Enter the name of the file you want to load from\n");
                 scanf("%s", file_to_load_from);
                 load_from_file(text_storage);
                 break;
@@ -169,15 +202,11 @@ int main() {
                 break;
             }
             case 6: {
-                insert_at_index();
+                insert_at_index(text_storage);
                 break;
             }
             case 7: {
                 search();
-                break;
-            }
-            case 8: {
-                clear_console();
                 break;
             }
             case 0: {
